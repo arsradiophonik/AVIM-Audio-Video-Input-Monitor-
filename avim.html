@@ -1,0 +1,653 @@
+<!doctype html>
+<!-- AVIM v1.8.3 · by Ars Radiophonik · uso libre -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AVIM v1.8.3</title>
+<link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAATVJREFUWIVjZCAe/CdBLQMDAwMjMYqYSDSU6oAYV/5nYGBgOLwLNQDmncWvaX4l3Gi8dgzqECDL5+iAUEgM/hCgtV2DKgRQfExp3KMDpLSAYvfgCwFq+xwdoOeKAQ+BUQewoAusykRNrTw0dsCAh8CoAzDSAAyETcdeFdx3/cLAwMDA8OMNL1wssgyhdv96Qzg770MTnO2r7IfVvAEPAaIdoCGpCPf9gDiAVgBnGtAwfANhvDClyILFu3wZGBgYGFZlYpcfvCFAKRBcdZ5hMQMDg60bpGTNVcaubvCGgKnocQYGBgaGBwwP4GKfExE1A+98hFqO/4jcoRh5noEByedkO+ABA2bBwTsfu6FxjIhCCb1BQwhgtIhwxRW5QPcEhL5sAaEn30W1e8DTAM5WMb3sHvAQAACJSEWncbyzGgAAAABJRU5ErkJggg==">
+<style>
+:root{color-scheme:dark;--g:#3ddc6b;--b:#4fa8ff;--y:#f2c230;--r:#ee4b3d;--w:#f4f4f0;--ink:#ecebe6;--dim:#a3a39b;--pn:rgba(28,29,34,.9);--ln:rgba(255,255,255,.12)}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;height:100%;background:#000;color:var(--ink);font:14px/1.4 "Segoe UI",system-ui,sans-serif;overflow:hidden}
+html:lang(ja) body{font-family:"Segoe UI","Yu Gothic UI","Meiryo UI",system-ui,sans-serif}
+html:lang(zh) body{font-family:"Segoe UI","Microsoft YaHei UI","PingFang SC",system-ui,sans-serif}
+body.idle{cursor:none}
+#stage{position:fixed;inset:0;display:grid;place-items:center}
+#v{display:block;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);object-fit:fill;background:#000;max-width:none}
+#empty{position:fixed;inset:0;display:grid;place-items:center;background:linear-gradient(90deg,#c0c0c0 0 14.28%,#c0c000 0 28.57%,#00c0c0 0 42.85%,#00c000 0 57.14%,#c000c0 0 71.43%,#c00000 0 85.71%,#0000c0 0);}
+#empty::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.78)}
+#card{position:relative;max-width:min(440px,88vw);padding:28px 30px;background:var(--pn);border:1px solid var(--ln);border-radius:14px;text-align:left}
+#card h1{margin:0 0 8px;font-size:22px;font-weight:600;letter-spacing:-.01em}
+#card p{margin:0 0 20px;color:var(--dim);max-width:46ch}
+button,select,input{font:inherit;color:inherit}
+.go{background:var(--y);color:#1b1a14;border:0;border-radius:8px;padding:9px 18px;font-weight:600;cursor:pointer}
+.glass{background:var(--pn);border:1px solid var(--ln);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+#hud{position:fixed;top:14px;left:14px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;pointer-events:none}
+#lamps{display:flex;align-items:center;gap:2px;padding:4px 6px;border-radius:999px;pointer-events:auto;transition:opacity .35s}
+#mons{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.lamp{width:10px;height:10px;border-radius:50%;background:var(--c);opacity:.2;transition:opacity .2s}
+.lamp.on{opacity:1;box-shadow:0 0 9px var(--c)}
+#ly{--c:var(--g)}#la{--c:var(--y);opacity:calc(.2 + var(--lv,0)*.8)}#lr{--c:var(--r)}
+#lr.on{animation:blink 1s step-end infinite}
+@keyframes blink{0%,49.9%{opacity:1;box-shadow:0 0 9px var(--c)}50%,100%{opacity:.15;box-shadow:none}}
+.lb{width:26px;height:26px;padding:0;display:grid;place-items:center;border:0;border-radius:50%;background:transparent;cursor:pointer}
+.lb:hover,.lb[aria-expanded=true]{background:rgba(255,255,255,.12)}
+.mw{width:236px;padding:8px 10px 10px 14px;border-radius:14px;pointer-events:auto;transition:opacity .35s}
+.mw.wide{width:300px}
+.mw header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.mw h3{margin:0;font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.ib.sm{width:26px;height:26px}.ib.sm svg{width:14px;height:14px}
+.mw footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:8px;border-top:1px solid var(--ln)}
+.mw.wide footer{justify-content:flex-end}
+.vb{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding-right:4px}
+#vr{font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
+#vf{color:var(--dim);font-variant-numeric:tabular-nums}
+.cap{margin-top:4px;color:var(--dim);font-size:12px}.cap:empty{display:none}
+#vu{display:flex;gap:3px;padding:4px 4px 0 0}
+#vu i{flex:1;height:14px;border-radius:3px;background:rgba(255,255,255,.12)}
+#vu i.on{background:var(--b);box-shadow:0 0 7px rgba(79,168,255,.5)}
+#nl{list-style:none;margin:0;padding:0 4px 0 0;max-height:170px;overflow:auto;display:grid;gap:7px;font-size:12.5px;line-height:1.35}
+#nl li{display:grid;grid-template-columns:auto 1fr;gap:8px}
+#nl time{color:var(--dim);font-variant-numeric:tabular-nums}
+#nl li.w time{color:var(--r)}
+.tb{padding:4px 12px;background:#25272d;border:1px solid var(--ln);border-radius:8px;cursor:pointer;font-size:12px}
+.tb:disabled{opacity:.4;cursor:default}
+.sw{display:flex;align-items:center;gap:8px;cursor:pointer;color:var(--dim);font-size:12px}
+.sw input{appearance:none;-webkit-appearance:none;width:28px;height:16px;margin:0;border-radius:999px;background:#25272d;border:1px solid var(--ln);position:relative;cursor:pointer;transition:background .15s}
+.sw input::after{content:"";position:absolute;top:2px;left:2px;width:10px;height:10px;border-radius:50%;background:var(--dim);transition:transform .15s,background .15s}
+.sw input:checked{background:rgba(242,194,48,.22);border-color:var(--y)}
+.sw input:checked::after{transform:translateX(12px);background:var(--y)}
+#note{position:fixed;top:14px;left:50%;transform:translateX(-50%);max-width:min(560px,92vw);padding:10px 16px;border-radius:10px;border-left:3px solid var(--y);background:rgba(28,29,34,.94);box-shadow:0 6px 24px rgba(0,0,0,.5);z-index:5}
+#dock{position:fixed;display:flex;align-items:center;gap:4px;padding:6px;border-radius:999px;transition:opacity .35s}
+body.idle #dock,body.idle #lamps,body.idle .mw:not(.pin){opacity:0;pointer-events:none}
+body[data-pos=bc] #dock{bottom:18px;left:50%;transform:translateX(-50%)}
+body[data-pos=bl] #dock{bottom:18px;left:18px}
+body[data-pos=br] #dock{bottom:18px;right:18px}
+body[data-pos=tl] #dock{top:14px;left:14px}
+body[data-pos=tr] #dock{top:14px;right:14px}
+body[data-pos=off] #dock,body[data-pos=off] #lamps{display:none}
+body[data-pos^=t] #hud{top:auto;bottom:14px;flex-direction:column-reverse}
+body[data-pos$=r] #panel{right:auto;left:12px;transform:translateX(calc(-100% - 24px))}
+body[data-pos$=r] #panel.open{transform:none}
+.ib{width:42px;height:42px;display:grid;place-items:center;border:0;border-radius:50%;background:transparent;cursor:pointer}
+.ib:hover,.ib[aria-expanded=true]{background:rgba(255,255,255,.12)}
+.ib svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.x{display:none}.muted .x{display:block}.muted .w{display:none}
+#vol{width:100%;accent-color:var(--y)}
+.vw{display:grid;gap:6px;width:92px}
+select option{background:#25272d;color:var(--ink)}
+.kr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.kr button{min-width:104px;padding:6px 10px;background:#25272d;border:1px solid var(--ln);border-radius:8px;cursor:pointer}
+.kr button.on{border-color:var(--y);color:var(--y)}
+#kd{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(350px,92vw);padding:20px;border-radius:14px;z-index:8}
+#kd h2{margin:0;font-size:16px;font-weight:600}
+.hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+body.idle #panel{opacity:0;pointer-events:none}
+#panel{position:fixed;top:12px;right:12px;bottom:12px;width:min(330px,92vw);padding:20px;border-radius:14px;overflow:auto;transform:translateX(calc(100% + 24px));transition:transform .22s ease,opacity .35s;z-index:6}
+#panel.open{transform:none}
+#panel h2{margin:0;font-size:16px;font-weight:600}
+.row{display:grid;gap:5px;margin-bottom:13px}
+.row label{color:var(--dim);font-size:12.5px}
+select{width:100%;padding:8px 10px;text-overflow:ellipsis;background:#25272d;border:1px solid var(--ln);border-radius:8px}
+input[type=range]{width:100%;accent-color:var(--y)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sub{margin:18px 0 10px;padding-top:14px;border-top:1px solid var(--ln);font-weight:600}
+.tools{display:flex;gap:8px;margin-top:6px}
+.tools button{flex:1;padding:8px;background:#25272d;border:1px solid var(--ln);border-radius:8px;cursor:pointer}
+.keys{margin-top:16px;color:var(--dim);font-size:12.5px;line-height:1.7}
+.about{margin-top:22px;padding-top:18px;border-top:1px solid var(--ln);display:grid;justify-items:center;gap:2px;text-align:center}
+.about img{width:32px;height:32px;image-rendering:pixelated;margin-bottom:8px}
+.about .nm{font-size:15px;font-weight:600;letter-spacing:.14em}
+.about .nm span{margin-left:6px;color:var(--dim);font-size:12.5px;font-weight:400;letter-spacing:.02em;font-variant-numeric:tabular-nums}
+.about .credit{color:var(--dim);font-size:12px;letter-spacing:.02em}
+.about .links{display:flex;gap:8px;margin-top:6px;font-size:12px;color:var(--ln)}
+.about a{color:var(--dim);text-decoration:none;border-bottom:1px solid transparent}
+.about a:hover,.about a:focus-visible{color:var(--y);border-bottom-color:currentColor}
+#zp{position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:10px;width:250px;padding:10px 14px;border-radius:14px}
+body[data-pos=bl] #zp,body[data-pos=tl] #zp{left:0;transform:none}
+body[data-pos=br] #zp,body[data-pos=tr] #zp{left:auto;right:0;transform:none}
+body[data-pos^=t] #zp{bottom:auto;top:calc(100% + 10px)}
+#zp input{flex:1;min-width:0;accent-color:var(--y)}
+#zl{min-width:4.2ch;text-align:right;font-variant-numeric:tabular-nums;color:var(--dim)}
+.row input[type=range]{accent-color:var(--y)}
+:focus-visible{outline:2px solid var(--y);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main id="stage"><video id="v" autoplay playsinline muted></video></main>
+
+<section id="empty">
+  <div id="card">
+    <h1 id="et">Connecting…</h1>
+    <p id="em">Opening the video input.</p>
+    <button class="go" id="bc" data-i="connect">Connect</button>
+  </div>
+</section>
+
+<div id="hud">
+  <div id="lamps" class="glass">
+    <button class="lb" id="lbv" data-ar="monVideo" data-ti="video" aria-label="Video monitor" title="Video" aria-expanded="false"><i class="lamp" id="ly"></i></button>
+    <button class="lb" id="lba" data-ar="monAudio" data-ti="audio" aria-label="Audio monitor" title="Audio" aria-expanded="false"><i class="lamp" id="la"></i></button>
+    <button class="lb" id="lbn" data-ar="notifs" data-ti="notifs" aria-label="Notifications" title="Notifications" aria-expanded="false"><i class="lamp" id="lr"></i></button>
+  </div>
+  <div id="mons">
+    <section class="mw glass" id="wv" hidden data-ar="monVideo" aria-label="Video monitor">
+      <header><h3 data-i="video">Video</h3><button class="ib sm mx" data-k="v" data-ar="close" data-ti="close" aria-label="Close" title="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></header>
+      <div class="vb"><span id="vr">—</span><span id="vf">—</span></div>
+      <div class="cap" id="vs">No connection</div>
+      <footer><label class="sw" data-ti="monPinTip" title="Keeps this monitor visible on screen"><input type="checkbox" id="pv"><span data-i="monPin">Active monitor</span></label></footer>
+    </section>
+    <section class="mw glass" id="wa" hidden data-ar="monAudio" aria-label="Audio monitor">
+      <header><h3 data-i="audio">Audio</h3><button class="ib sm mx" data-k="a" data-ar="close" data-ti="close" aria-label="Close" title="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></header>
+      <div id="vu" role="img" data-ar="audioLevel" aria-label="Audio level"></div>
+      <div class="cap" id="as"></div>
+      <footer><label class="sw" data-ti="monPinTip" title="Keeps this monitor visible on screen"><input type="checkbox" id="pa"><span data-i="monPin">Active monitor</span></label></footer>
+    </section>
+    <section class="mw glass wide" id="wn" hidden data-ar="notifs" aria-label="Notifications">
+      <header><h3 data-i="notifs">Notifications</h3><button class="ib sm mx" data-k="n" data-ar="close" data-ti="close" aria-label="Close" title="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></header>
+      <ul id="nl"></ul>
+      <div class="cap" id="ne" data-i="noNotifs">No notifications</div>
+      <footer><button class="tb" id="nc" data-i="clear" disabled>Clear</button></footer>
+    </section>
+  </div>
+</div>
+<div id="note" hidden role="status"></div>
+
+<nav id="dock" class="glass">
+  <button class="ib" id="bs" aria-label="Ajustes (A)" title="Ajustes (A)" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></button>
+  <button class="ib" id="bm" aria-label="Silenciar (M)" title="Silenciar (M)"><svg viewBox="0 0 24 24"><path d="M4 10v4h4l5 4V6l-5 4z"/><path class="w" d="M16.5 9a4 4 0 010 6"/><path class="x" d="M16 9l5 6M21 9l-5 6"/></svg></button>
+  <span class="vw"><input id="vol" type="range" min="0" max="2" step="0.05" data-ar="volume" aria-label="Volume"></span>
+  <button class="ib" id="bp" aria-label="Captura de imagen (C)" title="Captura de imagen (C)"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></button>
+  <button class="ib" id="bt" aria-label="Traducir captura (T)" title="Traducir captura (T)"><svg viewBox="0 0 24 24"><path d="M4 6h8M8 4v2M6 6c0 3 2 5 5 6M11 6c0 3-3 6-6 7"/><path d="M13 20l4-9 4 9M14.5 17h5"/></svg></button>
+  <button class="ib" id="bz" aria-label="Escala de imagen (Z)" title="Escala de imagen (Z)" aria-expanded="false"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M16 16l4 4M8.5 11h5"/></svg></button>
+  <button class="ib" id="bi" aria-label="Ventana flotante (P)" title="Ventana flotante (P)"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><rect x="12" y="12" width="7" height="5" rx="1"/></svg></button>
+  <button class="ib" id="bf" aria-label="Pantalla completa (F)" title="Pantalla completa (F)"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+  <div id="zp" class="glass" hidden><input id="zm" type="range" min="25" max="200" step="5" data-ar="zoom" data-ti="zoomReset" aria-label="Image scale" title="Double-click: reset to 100%"><span id="zl">100%</span></div>
+</nav>
+
+<aside id="panel" class="glass" data-ar="settings" aria-label="Settings">
+  <div class="hd"><h2 data-i="settings">Settings</h2><button class="ib" id="bx" data-ar="closeSet" data-ti="closeEsc" aria-label="Close settings (Esc)" title="Close (Esc)"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="row"><label for="sl" data-i="language">Language</label><select id="sl"><option value="en">English</option><option value="es">Español</option><option value="ja">日本語</option><option value="zh">中文（简体）</option></select></div>
+  <div class="row"><label for="sv" data-i="videoIn">Video input</label><select id="sv"></select></div>
+  <div class="row"><label for="sa" data-i="audioIn">Audio input</label><select id="sa"></select></div>
+  <div class="row" id="rowo"><label for="so" data-i="audioOut">Audio output</label><select id="so"></select></div>
+  <div class="two">
+    <div class="row"><label for="sr" data-i="res">Resolution</label><select id="sr"><option value="auto" data-i="auto">Automatic</option><option value="640x480">640×480</option><option value="720x480">720×480</option><option value="1280x720">1280×720</option><option value="1920x1080">1920×1080</option></select></div>
+    <div class="row"><label for="sf" data-i="fps">Frame rate</label><select id="sf"><option value="60">60 fps</option><option value="30">30 fps</option></select></div>
+  </div>
+  <div class="two">
+    <div class="row"><label for="sp" data-i="aspect">Aspect ratio</label><select id="sp"><option value="auto" data-i="auto">Automatic</option><option value="43">4:3</option><option value="169">16:9</option><option value="fill" data-i="fill">Fill</option></select></div>
+    <div class="row"><label for="ss" data-i="scaling">Scaling</label><select id="ss"><option value="smooth" data-i="smooth">Smooth</option><option value="sharp" data-i="sharp">Sharp</option><option value="int" data-i="pixel">Pixel-perfect</option></select></div>
+  </div>
+  <div class="row"><label for="sd" data-i="bar">Control bar</label><select id="sd"><option value="bc" data-i="pbc">Bottom center</option><option value="bl" data-i="pbl">Bottom left</option><option value="br" data-i="pbr">Bottom right</option><option value="tl" data-i="ptl">Top left</option><option value="tr" data-i="ptr">Top right</option><option value="off" data-i="poff">Hidden (shortcuts only)</option></select></div>
+  <div class="kr"><span data-i="checkErr">Error checking</span><button id="ck" aria-pressed="false">Off</button></div>
+  <div class="sub" data-i="image">Image</div>
+  <div class="row"><label for="zs"><span data-i="imgScale">Image scale</span> <span id="zv">100%</span></label><input id="zs" type="range" min="25" max="200" step="5" data-ti="zoomReset" title="Double-click: reset to 100%"></div>
+  <div class="row"><label for="gb" data-i="bright">Brightness</label><input id="gb" type="range" min="50" max="150" data-ti="resetDbl" title="Double-click: reset"></div>
+  <div class="row"><label for="gc" data-i="contrast">Contrast</label><input id="gc" type="range" min="50" max="150" data-ti="resetDbl" title="Double-click: reset"></div>
+  <div class="row"><label for="gs" data-i="color">Color</label><input id="gs" type="range" min="0" max="200" data-ti="resetDbl" title="Double-click: reset"></div>
+  <div class="tools"><button id="rs" data-i="resetImg">Reset image</button><button id="rc" data-i="reconnect">Reconnect</button></div>
+  <div class="tools" style="margin-top:14px"><button id="bk" data-i="shortcuts">Keyboard shortcuts</button></div>
+  <footer class="about">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAATVJREFUWIVjZCAe/CdBLQMDAwMjMYqYSDSU6oAYV/5nYGBgOLwLNQDmncWvaX4l3Gi8dgzqECDL5+iAUEgM/hCgtV2DKgRQfExp3KMDpLSAYvfgCwFq+xwdoOeKAQ+BUQewoAusykRNrTw0dsCAh8CoAzDSAAyETcdeFdx3/cLAwMDA8OMNL1wssgyhdv96Qzg770MTnO2r7IfVvAEPAaIdoCGpCPf9gDiAVgBnGtAwfANhvDClyILFu3wZGBgYGFZlYpcfvCFAKRBcdZ5hMQMDg60bpGTNVcaubvCGgKnocQYGBgaGBwwP4GKfExE1A+98hFqO/4jcoRh5noEByedkO+ABA2bBwTsfu6FxjIhCCb1BQwhgtIhwxRW5QPcEhL5sAaEn30W1e8DTAM5WMb3sHvAQAACJSEWncbyzGgAAAABJRU5ErkJggg==" alt="" width="32" height="32">
+    <div class="nm">AVIM<span>v1.8.3</span></div>
+    <div class="credit">Ars Radiophonik 2026</div>
+    <div class="links"><a href="https://arsradiophonik.itch.io/" target="_blank" rel="noopener noreferrer">itch.io</a><span aria-hidden="true">·</span><a href="https://github.com/arsradiophonik" target="_blank" rel="noopener noreferrer">GitHub</a></div>
+  </footer>
+</aside>
+
+<div id="kd" class="glass" role="dialog" data-ar="shortcuts" aria-label="Keyboard shortcuts" hidden>
+  <div class="hd"><h2 data-i="shortcuts">Keyboard shortcuts</h2><button class="ib" id="kx" data-ar="close" data-ti="closeEsc" aria-label="Close" title="Close (Esc)"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div id="kl"></div>
+  <div class="tools"><button id="kr" data-i="restore">Restore defaults</button></div>
+</div>
+
+<script>
+const $=i=>document.getElementById(i),v=$('v');
+const K={get(k,d){try{const x=localStorage.getItem('av.'+k);return x===null?d:JSON.parse(x)}catch{return d}},set(k,x){try{localStorage.setItem('av.'+k,JSON.stringify(x))}catch{}}};
+if(K.get('volv',0)!==2){K.set('vol',0.3);K.set('volv',2)}
+const P={vid:K.get('vid',''),ain:K.get('ain',null),aout:K.get('aout',''),vl:K.get('vl',''),al:K.get('al',''),ol:K.get('ol',''),pos:K.get('pos','bc'),res:K.get('res','auto'),fps:K.get('fps','60'),asp:K.get('asp','auto'),scl:K.get('scl','smooth'),vol:K.get('vol',0.3),mute:K.get('mute',false),br:K.get('br',100),co:K.get('co',100),sa:K.get('sa',100),chk:K.get('chk',false),zoom:K.get('zoom',100),mv:K.get('mv',true),ma:K.get('ma',false),lang:K.get('lang','en')};
+const DK={fs:'f',mute:'m',shot:'c',trad:'t',pip:'p',panel:'a',zoom:'z'};
+P.keys=Object.assign({},DK,K.get('keys',{}));
+const save=(k,x)=>{P[k]=x;K.set(k,x)};
+/* ---- idiomas / languages / 言語 / 语言 ---- */
+const I={
+en:{connect:'Connect',connecting:'Connecting…',openingHint:'Opening the video input. If the browser asks, choose “Allow while visiting the site” so it doesn’t ask again.',
+monVideo:'Video monitor',monAudio:'Audio monitor',notifs:'Notifications',video:'Video',audio:'Audio',close:'Close',closeEsc:'Close (Esc)',closeSet:'Close settings (Esc)',
+vsOff:'No connection',vsNoImg:'No image',vsConn:'Connecting',noAudioIn:'No audio input',noNotifs:'No notifications',clear:'Clear',
+monPin:'Active monitor',monPinTip:'Keeps this monitor visible on screen',audioLevel:'Audio level',volume:'Volume',
+settings:'Settings',language:'Language',videoIn:'Video input',audioIn:'Audio input',audioOut:'Audio output',defOut:'Default output',inName:'Input',outName:'Output',
+res:'Resolution',auto:'Automatic',fps:'Frame rate',aspect:'Aspect ratio',fill:'Fill',scaling:'Scaling',smooth:'Smooth',sharp:'Sharp',pixel:'Pixel-perfect',
+bar:'Control bar',pbc:'Bottom center',pbl:'Bottom left',pbr:'Bottom right',ptl:'Top left',ptr:'Top right',poff:'Hidden (shortcuts only)',
+checkErr:'Error checking',on:'On',off:'Off',image:'Image',imgScale:'Image scale',bright:'Brightness',contrast:'Contrast',color:'Color',
+resetImg:'Reset image',reconnect:'Reconnect',shortcuts:'Keyboard shortcuts',restore:'Restore defaults',resetDbl:'Double-click: reset',zoomReset:'Double-click: reset to 100%',
+fullscreen:'Fullscreen',mute:'Mute',muteA:'Mute',shot:'Screenshot',trad:'Translate screenshot',zoom:'Image scale',pip:'Floating window',pressKey:'Press a key…',space:'Space',
+noSignal:'No video signal',unexp:'Unexpected error: {0}',
+errNA:'Permission denied. Allow camera access from the lock icon in the address bar and press Connect.',
+errNF:'No video input found. Connect the capture card and press Connect.',
+errNR:'The input is in use by another program (OBS, another tab…). Close it and press Connect.',
+errOC:'The input doesn’t support that resolution or frame rate. Try Automatic.',
+errSE:'The browser blocked access. Open this file with Chrome or Edge.',
+errAB:'The input didn’t respond. Reconnect the capture card and press Connect.',
+aeNA:'Audio is blocked: check the microphone permission in the browser and in Windows (Privacy > Microphone).',
+aeNF:'The browser can’t find any audio input.',aeNR:'Couldn’t open audio: another program is using it or the device doesn’t allow it.',aeGen:'Couldn’t open audio ({0}).',
+lostT:'Capture card disconnected',lostM:'Video input lost. Reconnect the cable and it will resume on its own, or press Connect.',
+noBrT:'Unsupported browser',noBrM:'Open this file with a recent version of Chrome, Edge or Firefox.',
+audioLost:'Audio input lost.',audioFail:'Couldn’t start audio: {0}',ctx:'Click the screen to enable audio.',sinkBad:'Couldn’t use that audio output.',
+pick:'Choose your capture card’s audio input in Settings.',muteW:'The input stopped sending video.',
+shotOk:'Screenshot saved',tradOk:'Screenshot copied. In the translator, click and paste with Ctrl+V',tradFail:'Couldn’t copy the screenshot to the clipboard',popupBlocked:'The browser blocked the translator window',
+stale:'No frames arriving. Check the cable and that the console is on.',black:'Black image. Is the console on and on the right input?',
+quiet:'No sound on that audio input. Try another or check that the game has audio.'},
+es:{connect:'Conectar',connecting:'Conectando…',openingHint:'Abriendo la entrada de video. Si el navegador pregunta, elige «Permitir mientras se visita el sitio» para que no vuelva a pedirlo.',
+monVideo:'Monitor de video',monAudio:'Monitor de audio',notifs:'Notificaciones',video:'Video',audio:'Audio',close:'Cerrar',closeEsc:'Cerrar (Esc)',closeSet:'Cerrar ajustes (Esc)',
+vsOff:'Sin conexión',vsNoImg:'Sin imagen',vsConn:'Conectando',noAudioIn:'Sin entrada de audio',noNotifs:'Sin notificaciones',clear:'Borrar',
+monPin:'Monitor activo',monPinTip:'Mantiene este monitor visible en pantalla',audioLevel:'Nivel de audio',volume:'Volumen',
+settings:'Ajustes',language:'Idioma',videoIn:'Entrada de video',audioIn:'Entrada de audio',audioOut:'Salida de audio',defOut:'Salida predeterminada',inName:'Entrada',outName:'Salida',
+res:'Resolución',auto:'Automática',fps:'Fotogramas',aspect:'Formato',fill:'Rellenar',scaling:'Escalado',smooth:'Suave',sharp:'Nítido',pixel:'Píxel exacto',
+bar:'Barra de controles',pbc:'Abajo, al centro',pbl:'Abajo a la izquierda',pbr:'Abajo a la derecha',ptl:'Arriba a la izquierda',ptr:'Arriba a la derecha',poff:'Oculta (solo atajos)',
+checkErr:'Comprobar errores',on:'Activado',off:'Desactivado',image:'Imagen',imgScale:'Escala de la imagen',bright:'Brillo',contrast:'Contraste',color:'Color',
+resetImg:'Restablecer imagen',reconnect:'Reconectar',shortcuts:'Atajos de teclado',restore:'Restablecer',resetDbl:'Doble clic: restablecer',zoomReset:'Doble clic: restablecer al 100 %',
+fullscreen:'Pantalla completa',mute:'Silenciar',muteA:'Silencio',shot:'Captura de imagen',trad:'Traducir captura',zoom:'Escala de imagen',pip:'Ventana flotante',pressKey:'Pulsa una tecla…',space:'Espacio',
+noSignal:'Sin señal de video',unexp:'Error inesperado: {0}',
+errNA:'Permiso denegado. Permite el acceso a la cámara desde el candado de la barra de direcciones y pulsa Conectar.',
+errNF:'No hay ninguna entrada de video. Conecta la capturadora y pulsa Conectar.',
+errNR:'La entrada está ocupada por otro programa (OBS, otra pestaña…). Ciérralo y pulsa Conectar.',
+errOC:'La entrada no admite esa resolución o esos fps. Prueba con Automática.',
+errSE:'El navegador bloqueó el acceso. Abre este archivo con Chrome o Edge.',
+errAB:'La entrada no respondió. Reconecta la capturadora y pulsa Conectar.',
+aeNA:'El audio está bloqueado: revisa el permiso del micrófono en el navegador y en Windows (Privacidad > Micrófono).',
+aeNF:'El navegador no encuentra ninguna entrada de audio.',aeNR:'No se pudo abrir el audio: otro programa lo usa o el dispositivo no lo permite.',aeGen:'No se pudo abrir el audio ({0}).',
+lostT:'Capturadora desconectada',lostM:'Se perdió la entrada de video. Reconecta el cable y se reanudará sola, o pulsa Conectar.',
+noBrT:'Navegador no compatible',noBrM:'Abre este archivo con una versión reciente de Chrome, Edge o Firefox.',
+audioLost:'Se perdió la entrada de audio.',audioFail:'No se pudo iniciar el audio: {0}',ctx:'Haz clic en la pantalla para activar el audio.',sinkBad:'No se pudo usar esa salida de audio.',
+pick:'Elige la entrada de audio de tu capturadora en Ajustes.',muteW:'La entrada dejó de enviar imagen.',
+shotOk:'Captura guardada',tradOk:'Captura copiada. En el traductor haz clic y pega con Ctrl+V',tradFail:'No se pudo copiar la captura al portapapeles',popupBlocked:'El navegador bloqueó la ventana del traductor',
+stale:'No llegan fotogramas. Revisa el cable y que la consola esté encendida.',black:'Imagen negra. ¿La consola está encendida y en la entrada correcta?',
+quiet:'No llega sonido por esa entrada de audio. Prueba otra o revisa que el juego tenga audio.'},
+ja:{connect:'接続',connecting:'接続中…',openingHint:'ビデオ入力を開いています。ブラウザーに確認された場合は「サイト訪問中は許可」を選ぶと、次回から確認されません。',
+monVideo:'ビデオモニター',monAudio:'オーディオモニター',notifs:'通知',video:'ビデオ',audio:'オーディオ',close:'閉じる',closeEsc:'閉じる (Esc)',closeSet:'設定を閉じる (Esc)',
+vsOff:'未接続',vsNoImg:'映像なし',vsConn:'接続中',noAudioIn:'音声入力なし',noNotifs:'通知はありません',clear:'クリア',
+monPin:'モニターを常時表示',monPinTip:'このモニターを画面に表示し続けます',audioLevel:'音声レベル',volume:'音量',
+settings:'設定',language:'言語',videoIn:'ビデオ入力',audioIn:'オーディオ入力',audioOut:'オーディオ出力',defOut:'既定の出力',inName:'入力',outName:'出力',
+res:'解像度',auto:'自動',fps:'フレームレート',aspect:'アスペクト比',fill:'画面いっぱい',scaling:'拡大方式',smooth:'スムーズ',sharp:'シャープ',pixel:'ドットバイドット',
+bar:'コントロールバー',pbc:'下・中央',pbl:'下・左',pbr:'下・右',ptl:'上・左',ptr:'上・右',poff:'非表示（ショートカットのみ）',
+checkErr:'エラーチェック',on:'オン',off:'オフ',image:'画像',imgScale:'画像スケール',bright:'明るさ',contrast:'コントラスト',color:'色の濃さ',
+resetImg:'画像をリセット',reconnect:'再接続',shortcuts:'キーボードショートカット',restore:'初期値に戻す',resetDbl:'ダブルクリックでリセット',zoomReset:'ダブルクリックで100%に戻す',
+fullscreen:'全画面',mute:'ミュート',muteA:'ミュート',shot:'スクリーンショット',trad:'スクリーンショットを翻訳',zoom:'画像スケール',pip:'フローティングウィンドウ',pressKey:'キーを押してください…',space:'スペース',
+noSignal:'ビデオ信号がありません',unexp:'予期しないエラー：{0}',
+errNA:'権限が拒否されました。アドレスバーの鍵アイコンからカメラへのアクセスを許可し、「接続」を押してください。',
+errNF:'ビデオ入力が見つかりません。キャプチャーデバイスを接続して「接続」を押してください。',
+errNR:'入力は他のプログラム（OBS、別のタブなど）で使用中です。閉じてから「接続」を押してください。',
+errOC:'この入力は指定の解像度またはフレームレートに対応していません。「自動」を試してください。',
+errSE:'ブラウザーがアクセスをブロックしました。このファイルを Chrome または Edge で開いてください。',
+errAB:'入力が応答しませんでした。キャプチャーデバイスを接続し直して「接続」を押してください。',
+aeNA:'オーディオがブロックされています。ブラウザーと Windows（プライバシー > マイク）のマイク権限を確認してください。',
+aeNF:'ブラウザーが音声入力を見つけられません。',aeNR:'オーディオを開けませんでした。他のプログラムが使用中か、デバイスが対応していません。',aeGen:'オーディオを開けませんでした（{0}）。',
+lostT:'キャプチャーデバイスが切断されました',lostM:'ビデオ入力が失われました。ケーブルを接続し直すと自動で再開します。または「接続」を押してください。',
+noBrT:'非対応のブラウザー',noBrM:'このファイルは最新の Chrome、Edge、Firefox で開いてください。',
+audioLost:'音声入力が失われました。',audioFail:'オーディオを開始できませんでした：{0}',ctx:'画面をクリックしてオーディオを有効にしてください。',sinkBad:'その音声出力は使用できません。',
+pick:'設定でキャプチャーデバイスの音声入力を選んでください。',muteW:'入力から映像が送られなくなりました。',
+shotOk:'スクリーンショットを保存しました',tradOk:'スクリーンショットをコピーしました。翻訳ページでクリックし、Ctrl+V で貼り付けてください',tradFail:'スクリーンショットをクリップボードにコピーできませんでした',popupBlocked:'ブラウザーが翻訳ウィンドウをブロックしました',
+stale:'フレームが届いていません。ケーブルと本体の電源を確認してください。',black:'黒い画像です。本体の電源は入っていますか？入力は正しいですか？',
+quiet:'この音声入力から音が届いていません。別の入力を試すか、ゲームの音声を確認してください。'},
+zh:{connect:'连接',connecting:'正在连接…',openingHint:'正在打开视频输入。如果浏览器询问，请选择“访问该网站期间允许”，以免再次询问。',
+monVideo:'视频监视器',monAudio:'音频监视器',notifs:'通知',video:'视频',audio:'音频',close:'关闭',closeEsc:'关闭 (Esc)',closeSet:'关闭设置 (Esc)',
+vsOff:'未连接',vsNoImg:'无画面',vsConn:'连接中',noAudioIn:'无音频输入',noNotifs:'没有通知',clear:'清除',
+monPin:'常驻监视器',monPinTip:'让此监视器始终显示在屏幕上',audioLevel:'音频电平',volume:'音量',
+settings:'设置',language:'语言',videoIn:'视频输入',audioIn:'音频输入',audioOut:'音频输出',defOut:'默认输出',inName:'输入',outName:'输出',
+res:'分辨率',auto:'自动',fps:'帧率',aspect:'画面比例',fill:'填满',scaling:'缩放方式',smooth:'平滑',sharp:'锐利',pixel:'整数像素',
+bar:'控制栏',pbc:'底部居中',pbl:'左下角',pbr:'右下角',ptl:'左上角',ptr:'右上角',poff:'隐藏（仅快捷键）',
+checkErr:'错误检测',on:'已开启',off:'已关闭',image:'图像',imgScale:'图像缩放',bright:'亮度',contrast:'对比度',color:'色彩',
+resetImg:'重置图像',reconnect:'重新连接',shortcuts:'键盘快捷键',restore:'恢复默认',resetDbl:'双击：重置',zoomReset:'双击：重置为 100%',
+fullscreen:'全屏',mute:'静音',muteA:'静音',shot:'截图',trad:'翻译截图',zoom:'图像缩放',pip:'悬浮窗口',pressKey:'请按下一个键…',space:'空格',
+noSignal:'无视频信号',unexp:'意外错误：{0}',
+errNA:'权限被拒绝。请通过地址栏的锁形图标允许访问摄像头，然后点击“连接”。',
+errNF:'未找到视频输入。请连接采集卡后点击“连接”。',
+errNR:'该输入正被其他程序占用（OBS、其他标签页等）。请先关闭它，然后点击“连接”。',
+errOC:'该输入不支持此分辨率或帧率。请尝试“自动”。',
+errSE:'浏览器阻止了访问。请使用 Chrome 或 Edge 打开此文件。',
+errAB:'输入没有响应。请重新连接采集卡后点击“连接”。',
+aeNA:'音频被阻止：请检查浏览器和 Windows（隐私 > 麦克风）中的麦克风权限。',
+aeNF:'浏览器找不到任何音频输入。',aeNR:'无法打开音频：其他程序正在使用，或设备不允许。',aeGen:'无法打开音频（{0}）。',
+lostT:'采集卡已断开',lostM:'视频输入丢失。重新插好线缆后会自动恢复，也可以点击“连接”。',
+noBrT:'浏览器不兼容',noBrM:'请使用较新版本的 Chrome、Edge 或 Firefox 打开此文件。',
+audioLost:'音频输入丢失。',audioFail:'无法启动音频：{0}',ctx:'请点击屏幕以启用音频。',sinkBad:'无法使用该音频输出。',
+pick:'请在设置中选择采集卡的音频输入。',muteW:'该输入已停止发送画面。',
+shotOk:'截图已保存',tradOk:'截图已复制。在翻译页面中点击后按 Ctrl+V 粘贴',tradFail:'无法将截图复制到剪贴板',popupBlocked:'浏览器阻止了翻译窗口',
+stale:'没有收到画面帧。请检查线缆以及主机是否已开机。',black:'画面为黑色。主机是否已开机，输入是否选对？',
+quiet:'该音频输入没有声音。请尝试其他输入，或检查游戏是否有声音。'}
+};
+const HL={en:'en',es:'es',ja:'ja',zh:'zh-Hans'},LOC={en:'en-GB',es:'es-MX',ja:'ja-JP',zh:'zh-CN'},TL={en:'en',es:'es',ja:'en',zh:'zh-CN'};
+if(!I[P.lang])P.lang='en';
+const t=k=>(I[P.lang][k]!==undefined?I[P.lang][k]:I.en[k]!==undefined?I.en[k]:k);
+const mk=(k,p)=>p===undefined?k:k+'\u0001'+p;
+const tr=s=>!s?'':String(s).split('\u0002').map(q=>{const [k,p]=q.split('\u0001');return p===undefined?t(k):t(k).replace('{0}',p)}).join(' — ');
+let CARD=null,VS=['—','—','vsOff'];
+
+let stream=null,ac=null,gain=null,an=null,sinkEl=null,devs=[],W={},frames=0,lastFrame=0,black=0,busy=false,lost=false,peak=0,atrack=null,quiet=0,hops=0,idle;
+const RE=/captur|grabber|hdmi|\bav\b|cam ?link|elgato|avermedia|easycap|usb.?video/i;
+const RA=/captur|grabber|hdmi|\bav\b|cam ?link|elgato|avermedia|easycap|usb.?video|digital audio|macrosilicon/i;
+const audioMsg=e=>({NotAllowedError:'aeNA',NotFoundError:'aeNF',NotReadableError:'aeNR'}[e&&e.name]||mk('aeGen',e&&e.name));
+const ERR={NotAllowedError:'errNA',NotFoundError:'errNF',NotReadableError:'errNR',OverconstrainedError:'errOC',SecurityError:'errSE',AbortError:'errAB'};
+
+const lamp=(c,on)=>$('l'+c).classList.toggle('on',on);
+function drawCard(){if(CARD){$('et').textContent=tr(CARD[0]);$('em').textContent=tr(CARD[1])}}
+function showCard(on,ti,me,err){$('empty').hidden=!on;CARD=on?[ti,me]:null;drawCard();lamp('r',!!err&&on);if(on&&err){const x=ti+'\u0002'+me;if(LC!==x){LC=x;logN(x)}}else LC=''}
+function note(){const ks=['ctx','audio','pick','sink','quiet','stale','mute','black','toast'],k=ks.find(x=>W[x]),e=$('note');e.hidden=!k;if(k)e.textContent=tr(W[k]);if(stream)lamp('r',!!k&&k!=='toast');ks.forEach(x=>{if(W[x]){if(LG[x]!==W[x]){LG[x]=W[x];logN(W[x],x==='toast')}}else delete LG[x]})}
+function fail(e){down();showCard(true,'noSignal',ERR[e&&e.name]||mk('unexp',(e&&e.message)||e),true)}
+
+function down(){
+  if(stream)stream.getTracks().forEach(t=>{t.onended=null;t.onmute=null;t.onunmute=null;t.stop()});
+  stream=null;v.srcObject=null;
+  teardownAudio();W={};note();lamp('y',false);lamp('r',false);setVid('—','—','vsOff')
+}
+
+const pick=(l,id,lb)=>l.find(d=>d.deviceId&&d.deviceId===id)||l.find(d=>lb&&d.label===lb);
+async function refresh(){
+  devs=await navigator.mediaDevices.enumerateDevices();
+  const vids=devs.filter(d=>d.kind==='videoinput'),ains=devs.filter(d=>d.kind==='audioinput'),outs=devs.filter(d=>d.kind==='audiooutput'&&d.deviceId);
+  const vd=pick(vids,P.vid,P.vl)||(!P.vid&&(vids.find(d=>RE.test(d.label))||vids[0]));
+  if(vd&&vd.deviceId){P.vid=vd.deviceId;P.vl=vd.label}
+  const mm=ains.filter(d=>RA.test(d.label));
+  const ad=pick(ains,P.ain,P.al)||(vd&&ains.find(d=>d.groupId&&d.groupId===vd.groupId))||mm.find(d=>d.deviceId!=='default'&&d.deviceId!=='communications')||mm[0];
+  if(ad&&ad.deviceId){P.ain=ad.deviceId;P.al=ad.label}
+  const od=pick(outs,P.aout,P.ol);
+  if(od&&od.deviceId){P.aout=od.deviceId;P.ol=od.label}else if(P.aout&&outs.length&&outs.every(d=>d.label))P.aout='';
+  ['vid','vl','ain','al','aout','ol'].forEach(k=>K.set(k,P[k]));
+  const tl=k=>{const t=stream&&(k==='v'?stream.getVideoTracks()[0]:stream.getAudioTracks()[0]);return t?t.label:''};
+  const fill=(id,list,first,cur,name,live)=>{const el=$(id);el.innerHTML='';if(first)el.add(new Option(first,''));list.forEach((d,i)=>el.add(new Option(d.label||(!d.deviceId&&live)||name+' '+(i+1),d.deviceId)));el.value=cur||'';if(live&&list.length&&!list.some(d=>d.deviceId))el.selectedIndex=0;else if((!first&&!cur)||el.selectedIndex<0)el.selectedIndex=first?0:-1;el.title=el.selectedOptions[0]?el.selectedOptions[0].text:''};
+  fill('sv',vids,null,P.vid,t('inName'),tl('v'));fill('sa',ains,null,P.ain,t('inName'),tl('a'));fill('so',outs,t('defOut'),P.aout,t('outName'));
+  $('rowo').hidden=!(window.AudioContext&&AudioContext.prototype.setSinkId)&&!HTMLMediaElement.prototype.setSinkId
+}
+
+function attempts(){
+  const [w,h]=P.res==='auto'?[1920,1080]:P.res.split('x').map(Number);
+  const dev=P.vid?{deviceId:{exact:P.vid}}:{};
+  const raw={echoCancellation:false,noiseSuppression:false,autoGainControl:false,channelCount:{ideal:2}};
+  return[{video:{...dev,width:{ideal:w},height:{ideal:h},frameRate:{ideal:Number(P.fps)}},audio:P.ain?{deviceId:{exact:P.ain},...raw}:raw},{video:dev,audio:raw},{video:dev,audio:false}]
+}
+
+async function open(){
+  if(busy)return;busy=true;lost=false;down();showCard(true,'connecting','openingHint');
+  let s=null,err=null,aerr=null;const list=attempts();
+  for(let i=0;i<list.length;i++){
+    try{s=await navigator.mediaDevices.getUserMedia(list[i]);break}
+    catch(e){err=e;if(list[i].audio)aerr=e;const hard=e.name==='NotAllowedError'||e.name==='NotReadableError';if(hard&&list[i].audio)i=list.length-2;else if(hard)break}
+  }
+  busy=false;
+  if(!s)return fail(err);
+  stream=s;v.srcObject=s;
+  const vt=s.getVideoTracks()[0];
+  vt.contentHint='motion';
+  vt.onended=()=>{lost=true;down();showCard(true,'lostT','lostM',true)};
+  vt.onmute=()=>{if(P.chk){W.mute='muteW';note()}};
+  vt.onunmute=()=>{delete W.mute;note()};
+  try{await v.play()}catch{}
+  lastFrame=performance.now();lamp('y',true);showCard(false);
+  if(!s.getAudioTracks().length&&aerr)W.audio=audioMsg(aerr);
+  wireAudio();volume();layout();
+  settle().catch(()=>{})
+}
+
+async function openAudio(){
+  if(!stream||!P.ain)return;
+  let a=null;
+  try{a=(await navigator.mediaDevices.getUserMedia({audio:{deviceId:{exact:P.ain},echoCancellation:false,noiseSuppression:false,autoGainControl:false,channelCount:{ideal:2}}})).getAudioTracks()[0]}
+  catch(e){W.audio=audioMsg(e);note()}
+  if(!a)return;
+  if(!stream)return a.stop();
+  stream.getAudioTracks().forEach(t=>{t.onended=null;t.stop();stream.removeTrack(t)});
+  teardownAudio();delete W.audio;stream.addTrack(a);wireAudio();note()
+}
+function teardownAudio(){
+  if(ac){ac.onstatechange=null;ac.close().catch(()=>{});ac=null}
+  if(sinkEl){sinkEl.srcObject=null;sinkEl=null}
+  gain=an=atrack=null;delete W.ctx;delete W.sink;delete W.quiet;$('la').style.setProperty('--lv',0)
+}
+async function settle(){
+  await refresh();
+  const cur=(k,id)=>devs.find(d=>d.kind===k&&d.deviceId===id);
+  const vt=stream&&stream.getVideoTracks()[0],at=stream&&stream.getAudioTracks()[0];
+  const cv=vt&&cur('videoinput',vt.getSettings().deviceId);
+  if(cv&&P.vid&&cv.deviceId!==P.vid&&hops++<2)return open();
+  const ca=at&&cur('audioinput',at.getSettings().deviceId),wa=cur('audioinput',P.ain);
+  if(ca&&wa&&ca.groupId!==wa.groupId&&hops++<2)return openAudio();
+  volume()
+}
+async function connect(){
+  if(!navigator.mediaDevices)return showCard(true,'noBrT','noBrM',true);
+  hops=0;
+  try{await refresh()}catch(e){return fail(e)}
+  if(!devs.some(d=>d.kind==='videoinput'))return fail({name:'NotFoundError'});
+  if(devs.some(d=>d.kind==='videoinput'&&!d.deviceId))P.vid=''
+  open()
+}
+
+function wireAudio(){
+  const at=stream.getAudioTracks()[0];if(!at)return;
+  at.onended=()=>{W.audio='audioLost';note()};
+  try{
+    const sr=at.getSettings().sampleRate;
+    try{ac=new AudioContext({latencyHint:'interactive',sampleRate:sr})}catch{ac=new AudioContext({latencyHint:'interactive'})}
+    const src=ac.createMediaStreamSource(new MediaStream([at]));
+    gain=ac.createGain();an=ac.createAnalyser();an.fftSize=1024;
+    src.connect(gain);src.connect(an);
+    if(ac.setSinkId||!HTMLMediaElement.prototype.setSinkId)gain.connect(ac.destination);
+    else{const d=ac.createMediaStreamDestination();gain.connect(d);sinkEl=new Audio();sinkEl.srcObject=d.stream;sinkEl.play().catch(()=>{})}
+  }catch(e){teardownAudio();W.audio=mk('audioFail',e.message||e.name);return}
+  atrack=at;
+  const st=()=>{if(!ac)return;ac.state==='running'?delete W.ctx:W.ctx='ctx';note()};
+  ac.onstatechange=st;ac.resume().catch(()=>{});st();
+  sink();volume()
+}
+function sink(){
+  const bad=()=>{W.sink='sinkBad';note()};
+  delete W.sink;
+  if(ac&&ac.setSinkId)ac.setSinkId(P.aout).catch(bad);
+  else if(sinkEl&&sinkEl.setSinkId)sinkEl.setSinkId(P.aout).catch(bad)
+}
+function volume(){if(gain)gain.gain.value=P.mute?0:P.vol;if(stream&&!atrack&&!W.audio)W.pick='pick';else delete W.pick;note();$('bm').classList.toggle('muted',P.mute);$('vol').value=P.vol}
+const toggleMute=()=>{save('mute',!P.mute);volume()};
+
+function layout(){
+  const w=v.videoWidth,h=v.videoHeight;if(!w||!innerWidth||!innerHeight)return;
+  v.style.imageRendering=P.scl==='smooth'?'auto':'pixelated';
+  const z=P.zoom/100;
+  if(P.asp==='fill'){v.style.width=100*z+'vw';v.style.height=100*z+'vh';return}
+  const ar=P.asp==='43'?4/3:P.asp==='169'?16/9:((w===720||w===704)&&h<=576?4/3:w/h);
+  const bw=h*ar;let s=Math.min(innerWidth/bw,innerHeight/h)*z;
+  if(P.scl==='int'&&s>=1)s=Math.floor(s);
+  v.style.width=bw*s+'px';v.style.height=h*s+'px'
+}
+function tone(){v.style.filter='brightness('+P.br+'%) contrast('+P.co+'%) saturate('+P.sa+'%)'}
+function setZoom(x){
+  x=Math.max(25,Math.min(200,Number(x)||100));
+  save('zoom',x);
+  $('zm').value=x;$('zs').value=x;$('zl').textContent=x+'%';$('zv').textContent=x+'%';
+  layout()
+}
+function toggleZoom(o){
+  const p=$('zp');o=o===undefined?p.hidden:o;
+  p.hidden=!o;$('bz').setAttribute('aria-expanded',o);wake()
+}
+
+function shot(){
+  if(!v.videoWidth)return;
+  const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;
+  const x=c.getContext('2d');x.filter=v.style.filter;x.drawImage(v,0,0);
+  c.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='capture-'+new Date().toISOString().replace(/[:.]/g,'-').slice(0,19)+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)});
+  W.toast='shotOk';note();setTimeout(()=>{delete W.toast;note()},1800)
+}
+let tw=null;
+async function trad(){
+  if(!v.videoWidth)return;
+  const k=Math.max(1,Math.min(4,Math.floor(2160/v.videoWidth))),c=document.createElement('canvas');
+  c.width=v.videoWidth*k;c.height=v.videoHeight*k;
+  const x=c.getContext('2d');x.imageSmoothingEnabled=false;x.drawImage(v,0,0,c.width,c.height);
+  let ok=false;
+  try{const b=await new Promise(r=>c.toBlob(r,'image/png'));await navigator.clipboard.write([new ClipboardItem({'image/png':b})]);ok=true}catch{}
+  W.toast=ok?'tradOk':'tradFail';note();
+  setTimeout(()=>{delete W.toast;note()},3500);
+  if(!ok)return;
+  if(document.fullscreenElement){await document.exitFullscreen().catch(()=>{});await new Promise(r=>setTimeout(r,350))}
+  const u='https://translate.google.com/?sl=ja&tl='+TL[P.lang]+'&op=images';
+  if(tw&&!tw.closed){tw.location.href=u;tw.focus()}else tw=window.open(u,'traductor-av','popup,width=1000,height=760');
+  if(!tw){W.toast='popupBlocked';note()}
+}
+function revive(){
+  if(!stream)return;
+  layout();
+  if(v.paused)v.play().catch(()=>{});
+  const t=lastFrame;
+  setTimeout(()=>{if(stream&&lastFrame===t){v.srcObject=null;v.srcObject=stream;v.play().catch(()=>{})}},1500)
+}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)revive()});
+document.addEventListener('fullscreenchange',()=>setTimeout(revive,200));
+addEventListener('focus',()=>setTimeout(revive,200));
+const fs=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen().catch(()=>{});
+const pip=()=>document.pictureInPictureElement?document.exitPictureInPicture():v.videoWidth&&v.requestPictureInPicture().catch(()=>{});
+function togglePanel(o){const p=$('panel');o=o===undefined?!p.classList.contains('open'):o;p.classList.toggle('open',o);p.inert=!o;$('bs').setAttribute('aria-expanded',o);wake()}
+function wake(){document.body.classList.remove('idle');clearTimeout(idle);idle=setTimeout(()=>{const p=$('panel');if(!$('dock').matches(':hover')&&!p.matches(':hover')&&!p.contains(document.activeElement)&&!$('zp').contains(document.activeElement)&&!$('hud').matches(':hover')&&!$('hud').contains(document.activeElement)){document.body.classList.add('idle');$('zp').hidden=true;$('bz').setAttribute('aria-expanded','false')}},1200)}
+
+if('requestVideoFrameCallback' in v){const tick=()=>{frames++;lastFrame=performance.now();v.requestVideoFrameCallback(tick)};v.requestVideoFrameCallback(tick)}
+else v.addEventListener('timeupdate',()=>{frames++;lastFrame=performance.now()});
+
+const cv=document.createElement('canvas');cv.width=16;cv.height=12;
+const cx=cv.getContext('2d',{willReadFrequently:true});
+setInterval(()=>{
+  const fps=frames;frames=0;
+  if(!stream)return;
+  const stale=performance.now()-lastFrame>3000;
+  if(stale&&P.chk)W.stale='stale';else delete W.stale;
+  lamp('y',!stale);
+  if(!stale&&v.videoWidth){try{cx.drawImage(v,0,0,16,12);const d=cx.getImageData(0,0,16,12).data;let s=0;for(let i=0;i<d.length;i+=4)s+=d[i]*.3+d[i+1]*.59+d[i+2]*.11;black=s/192<4?black+1:0}catch{}}
+  if(black>=5&&P.chk)W.black='black';else delete W.black;
+  const rz=v.videoWidth?v.videoWidth+'×'+v.videoHeight:'—';
+  if(stale)setVid(rz,'—','vsNoImg');else if(v.videoWidth)setVid(rz,fps+' fps','');else setVid('—','—','vsConn');
+  note()
+},1000);
+const fb=new Float32Array(1024),vu=$('vu'),NS=16,VL=-50,VH=-1;
+let lvDb=-99,pkDb=-99,pkT=0,lastT=0,lastN=-1,lastK=-1,lastCap=null;
+for(let i=0;i<NS;i++)vu.append(document.createElement('i'));
+const segs=[...vu.children];
+const seg=db=>Math.max(0,Math.min(NS,Math.ceil((db-VL)/(VH-VL)*NS)));
+function meter(t){
+  requestAnimationFrame(meter);
+  const dt=Math.min(.1,(t-lastT)/1000)||.016;lastT=t;
+  let m=0;
+  if(an){an.getFloatTimeDomainData(fb);for(let i=0;i<fb.length;i++){const a=Math.abs(fb[i]);if(a>m)m=a}}
+  peak=Math.max(peak,m);
+  const db=m>0?20*Math.log10(m):-99;
+  lvDb=db>lvDb?db:Math.max(db,lvDb-70*dt);
+  if(lvDb>=pkDb){pkDb=lvDb;pkT=t}else if(t-pkT>600)pkDb=Math.max(lvDb,pkDb-30*dt);
+  $('la').style.setProperty('--lv',Math.min(1,Math.max(0,(lvDb-VL)/-VL)));
+  const cap=atrack?'':'noAudioIn';
+  if(cap!==lastCap){$('as').textContent=tr(cap);lastCap=cap}
+  if(!$('wa').hidden){
+    const n=seg(lvDb),k=pkDb>VL?seg(pkDb)-1:-1;
+    if(n!==lastN||k!==lastK){segs.forEach((e,i)=>e.classList.toggle('on',i<n||i===k));lastN=n;lastK=k}
+  }
+}
+requestAnimationFrame(meter);
+
+/* ---- monitores (ventanas de las luces) ---- */
+const NL=[],LG={},MK={v:'mv',a:'ma'};let LC='';
+function setVid(r,f,s){VS=[r,f,s];$('vr').textContent=r;$('vf').textContent=f;$('vs').textContent=tr(s)}
+function logN(t,info){NL.unshift({d:new Date(),x:t,i:!!info});if(NL.length>60)NL.length=60;drawN()}
+function drawN(){
+  const l=$('nl');l.innerHTML='';
+  NL.forEach(n=>{
+    const li=document.createElement('li'),tm=document.createElement('time'),sp=document.createElement('span');
+    tm.textContent=n.d.toLocaleTimeString(LOC[P.lang],{hour12:false});sp.textContent=tr(n.x);
+    if(!n.i)li.className='w';
+    li.append(tm,sp);l.append(li)
+  });
+  $('ne').hidden=NL.length>0;$('nc').disabled=!NL.length
+}
+function syncMon(k){if(!MK[k])return;$('p'+k).checked=!!P[MK[k]];$('w'+k).classList.toggle('pin',!!P[MK[k]])}
+function mon(k,o){
+  const w=$('w'+k);o=o===undefined?w.hidden:o;
+  if(!o&&MK[k]&&P[MK[k]])save(MK[k],false);
+  w.hidden=!o;$('lb'+k).setAttribute('aria-expanded',o);
+  syncMon(k);wake()
+}
+function closeMons(){['v','a','n'].forEach(k=>{if(!$('w'+k).hidden&&!(MK[k]&&P[MK[k]]))mon(k,false)})}
+['v','a','n'].forEach(k=>{$('lb'+k).onclick=()=>mon(k)});
+document.querySelectorAll('.mx').forEach(b=>{b.onclick=()=>mon(b.dataset.k,false)});
+['v','a'].forEach(k=>{$('p'+k).onchange=e=>{save(MK[k],e.target.checked);syncMon(k);e.target.blur()}});
+$('nc').onclick=()=>{NL.length=0;drawN()};
+function initMons(){drawN();['v','a'].forEach(k=>{syncMon(k);if(P[MK[k]])mon(k,true)})}
+setInterval(()=>{
+  if(!atrack||!ac){quiet=0;peak=0;delete W.quiet;return}
+  quiet=ac.state==='running'&&!document.hidden&&peak<.004?quiet+1:0;peak=0;
+  if(quiet>=6&&P.chk)W.quiet='quiet';else delete W.quiet;
+  note()
+},1000);
+
+const binds=[['sv','vid',open,'vl'],['sa','ain',openAudio,'al'],['so','aout',sink,'ol'],['sr','res',open],['sf','fps',open],['sp','asp',layout],['ss','scl',layout],['sd','pos',()=>{document.body.dataset.pos=P.pos}]];
+binds.forEach(([id,k,fn,lk])=>{const el=$(id);if(!['sv','sa','so'].includes(id))el.value=P[k];el.onchange=()=>{save(k,el.value);if(lk)save(lk,el.value?el.selectedOptions[0].text:'');el.title=el.selectedOptions[0].text;fn();el.blur()}});
+[['gb','br'],['gc','co'],['gs','sa']].forEach(([id,k])=>{const el=$(id);el.value=P[k];el.oninput=()=>{save(k,Number(el.value));tone()};el.onchange=()=>el.blur();el.ondblclick=()=>{save(k,100);el.value=100;tone()}});
+['zm','zs'].forEach(id=>{const el=$(id);el.oninput=()=>setZoom(el.value);el.onchange=()=>el.blur();el.ondblclick=()=>setZoom(100)});
+$('bz').onclick=()=>toggleZoom();
+addEventListener('pointerdown',e=>{if(!$('zp').hidden&&!e.target.closest('#dock'))toggleZoom(false)});
+$('rs').onclick=()=>{['br','co','sa'].forEach(k=>save(k,100));[['gb','br'],['gc','co'],['gs','sa']].forEach(([i,k])=>$(i).value=P[k]);tone()};
+function chk(){const b=$('ck');b.textContent=P.chk?t('on'):t('off');b.className=P.chk?'on':'';b.setAttribute('aria-pressed',P.chk)}
+$('ck').onclick=()=>{save('chk',!P.chk);if(!P.chk){['stale','black','mute','quiet'].forEach(k=>delete W[k]);note()}chk()};
+$('rc').onclick=connect;$('bc').onclick=connect;$('bx').onclick=()=>togglePanel(false);
+$('bs').onclick=()=>togglePanel();$('bm').onclick=toggleMute;$('bp').onclick=shot;$('bt').onclick=trad;$('bf').onclick=fs;
+$('bi').onclick=pip;$('bi').hidden=!document.pictureInPictureEnabled;
+$('vol').oninput=e=>{save('vol',Number(e.target.value));if(P.mute)save('mute',false);volume()};
+$('vol').onchange=e=>e.target.blur();
+v.ondblclick=fs;v.onresize=layout;v.onloadedmetadata=layout;addEventListener('resize',layout);
+['pointermove','pointerdown','keydown'].forEach(e=>addEventListener(e,wake));
+['pointerdown','keydown'].forEach(e=>addEventListener(e,()=>{if(ac&&ac.state!=='running')ac.resume().catch(()=>{})}));
+const ACT=[['fs','fullscreen'],['mute','muteA'],['shot','shot'],['trad','trad'],['pip','pip'],['zoom','zoom'],['panel','settings']];
+const RUN={fs,mute:()=>toggleMute(),shot,trad,pip,zoom:()=>P.pos==='off'?togglePanel(true):toggleZoom(),panel:()=>togglePanel()};
+const kname=k=>k===' '?t('space'):k.length===1?k.toUpperCase():k;
+let rebind=null;
+function titles(){[['bf','fs','fullscreen'],['bm','mute','mute'],['bp','shot','shot'],['bt','trad','trad'],['bi','pip','pip'],['bz','zoom','zoom'],['bs','panel','settings']].forEach(([i,a,tk])=>{const e=$(i),x=t(tk)+' ('+kname(P.keys[a])+')';e.title=x;e.setAttribute('aria-label',x)})}
+function drawKeys(){
+  const l=$('kl');l.innerHTML='';
+  ACT.forEach(([a,tt])=>{
+    const r=document.createElement('div'),n=document.createElement('span'),b=document.createElement('button');
+    r.className='kr';n.textContent=t(tt);
+    b.textContent=rebind===a?t('pressKey'):kname(P.keys[a]);b.className=rebind===a?'on':'';
+    b.onclick=()=>{rebind=rebind===a?null:a;drawKeys()};
+    r.append(n,b);l.append(r)
+  });
+  titles()
+}
+function toggleKeys(o){$('kd').hidden=!o;rebind=null;if(o)drawKeys()}
+$('bk').onclick=()=>toggleKeys(true);$('kx').onclick=()=>toggleKeys(false);
+$('kr').onclick=()=>{P.keys=Object.assign({},DK);K.set('keys',P.keys);rebind=null;drawKeys()};
+addEventListener('keydown',e=>{
+  const k=e.key.toLowerCase();
+  if(rebind){
+    e.preventDefault();
+    if(['shift','control','alt','meta','dead'].includes(k))return;
+    if(k!=='escape'){const o=Object.keys(P.keys).find(x=>P.keys[x]===k),old=P.keys[rebind];if(o&&o!==rebind)P.keys[o]=old;P.keys[rebind]=k;K.set('keys',P.keys)}
+    rebind=null;drawKeys();return
+  }
+  if(e.ctrlKey||e.metaKey||e.altKey||e.target.matches('select'))return;
+  if(k==='escape'){if(!$('kd').hidden)toggleKeys(false);else if(!$('zp').hidden)toggleZoom(false);else if($('panel').classList.contains('open'))togglePanel(false);else closeMons();return}
+  const a=Object.keys(P.keys).find(x=>P.keys[x]===k);if(a)RUN[a]()
+});
+if(navigator.mediaDevices)navigator.mediaDevices.addEventListener('devicechange',async()=>{try{await refresh();if(lost&&!busy&&devs.some(d=>d.kind==='videoinput'&&d.deviceId===P.vid))open()}catch{}});
+function applyLang(init){
+  document.documentElement.lang=HL[P.lang];
+  document.querySelectorAll('[data-i]').forEach(e=>e.textContent=t(e.dataset.i));
+  document.querySelectorAll('[data-ti]').forEach(e=>e.title=t(e.dataset.ti));
+  document.querySelectorAll('[data-ar]').forEach(e=>e.setAttribute('aria-label',t(e.dataset.ar)));
+  $('sl').value=P.lang;
+  titles();chk();drawCard();drawN();setVid(...VS);lastCap=null;
+  if(!$('kd').hidden)drawKeys();
+  if(!init){note();refresh().catch(()=>{})}
+}
+$('sl').onchange=e=>{save('lang',e.target.value);applyLang();e.target.blur()};
+document.body.dataset.pos=P.pos;applyLang(true);$('panel').inert=true;tone();setZoom(P.zoom);initMons();volume();wake();connect();
+</script>
+</body>
+</html>
